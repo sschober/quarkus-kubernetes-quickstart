@@ -4,6 +4,35 @@ This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
+## Deploy to k3d
+
+1. Create a cluster:
+
+```
+k3d  cluster create demo --api-port 6550  --port 8080:80@loadbalancer
+```
+
+2. build image:
+```
+docker build -f src/main/docker/Dockerfile.jvm -t svenschober/kubernetes-quickstart:1.0.0-SNAPSHOT .
+```
+
+3. import image:
+```
+k3d image import --cluster demo svenschober/kubernetes-quickstart:1.0.0-SNAPSHOT
+```
+4. adapt `kubernetes.yml` to use correct image name and set pull policy to `NotIfPresent`.
+
+5. create deployment:
+```
+kubectl apply -f target/kubernetes/kubernetes.yml
+```
+6. create ingress
+
+```
+kubectl apply -f ingress.yml
+```
+
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:
